@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: api-v2-ing
+  namespace: leave-form-v2-ns
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: leave-form-api.techostartup.center
+      http:
+        paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: api-v2-svc
+              port:
+                number: 8000
+  tls:
+    - hosts:
+        - '*.techostartup.center'
+      secretName: techo-startup-center-certificate
