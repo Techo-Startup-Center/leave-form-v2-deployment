@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-v2-deploy
+  namespace: leave-form-v2-ns
+  labels:
+    app: api-v2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-v2
+  template:
+    metadata:
+      labels:
+        app: api-v2
+    spec:
+      hostAliases:
+        - ip: 10.0.104.51
+          hostnames:
+            - container-registry.techostartup.center
+        - ip: 10.10.40.237
+          hostnames:
+            - container-registry-dev.techostartup.center
+      imagePullSecrets:
+        - name: regcred
+      volumes:
+        - name: leave-form-v2-pv
+          secret:
+            secretName: leave-form-v2-file-secret
+      containers:
+        - name: leave-form-v2-api
+          image: container-registry-dev.techostartup.center/leaveform/leave-form:v0.0.1-SNAPSHOT
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - mountPath: /app/resources/tls/public.pem
+              subPath: public.pem
+              name: leave-form-v2-pv
+              readOnly: true
+            - mountPath: /app/resources/tls/private.pem
+              subPath: private.pem
+              name: leave-form-v2-pv
+              readOnly: true
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: test
+            - name: SPRING_DATASOURCE_USERNAME
+              value: postgres
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: password
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://10.10.40.158:5432/leave_form_dev_db
