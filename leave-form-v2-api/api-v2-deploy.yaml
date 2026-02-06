@@ -30,7 +30,7 @@ spec:
             secretName: leave-form-v2-file-secret
       containers:
         - name: leave-form-v2-api
-          image: container-registry-dev.techostartup.center/leaveform/leave-form:v0.0.1-SNAPSHOT
+          image: container-registry-dev.techostartup.center/leaveform/leave-form:v0.0.2-SNAPSHOT
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
